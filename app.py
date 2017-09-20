@@ -16,7 +16,7 @@ def handle_verification():
         return request.args.get('hub.challenge')
     else:
         print("Verification failed!")
-        return 'Error, wrong validation token'
+        return request.args.get('hub.verify_token') + 'Error, wrong validation token'
 
 @app.route('/', methods=['POST'])
 def handle_messages():
