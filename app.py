@@ -198,7 +198,8 @@ def send_message(token, recipient, text):
             params={"access_token": token},
             data=json.dumps({
                 "recipient": {"id": recipient},
-                "message": {"quick_replies":quick_replies_list}
+                "message": {"text": "Sorry, I didn't get that.",
+                            "quick_replies":quick_replies_list}
             }),
             headers={'Content-type': 'application/json'})
     
