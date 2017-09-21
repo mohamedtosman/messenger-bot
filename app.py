@@ -100,7 +100,7 @@ def webhook():
 
 
 def send_location(token, recipient, lat, longi):
-    r = requests.get('http://api.openweathermap.org/data/2.5/weather?' + "lat=" + lat + "&lon=" + longi + '&APPID=facf3a7876343295f70bb6b943e3452c')
+    r = requests.get('http://api.openweathermap.org/data/2.5/weather?' + "lat=" + str(lat) + "&lon=" + str(longi) + '&APPID=facf3a7876343295f70bb6b943e3452c')
     json_obj = r.json()
     temp_k = float(json_obj['main']['temp'])
     temp_c = str(round((temp_k - 273.15), 2))
