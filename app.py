@@ -73,8 +73,7 @@ def messaging_events(payload):
 def send_message(token, recipient, text):
     """Send the message text to recipient with id recipient.
     """
-    print("HEREEEEEEE " + text.lower().decode('utf-8'))
-    if "meme" in text.lower():
+    if "meme" in text.lower().decode('utf-8'):
         subreddit_name = "memes"
     elif "shower" in text.lower():
         subreddit_name = "Showerthoughts"
