@@ -75,9 +75,9 @@ def send_message(token, recipient, text):
     """
     if "meme" in text.lower().decode('utf-8'):
         subreddit_name = "memes"
-    elif "shower" in text.lower():
+    elif "shower" in text.lower().decode('utf-8'):
         subreddit_name = "Showerthoughts"
-    elif "joke" in text.lower():
+    elif "joke" in text.lower().decode('utf-8'):
         subreddit_name = "Jokes"
     else:
         subreddit_name = "GetMotivated"
