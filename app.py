@@ -8,8 +8,8 @@ import praw
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
-reddit = praw.Reddit(client_id='*************',
-                     client_secret='****************',
+reddit = praw.Reddit(client_id='oSX_k9ERfsDcjA',
+                     client_secret='uGdRuM0V2O4gL-Gw7LNA7KL_nAw',
                      user_agent='my user agent')
 
 # This needs to be filled with the Page Access Token that will be provided
