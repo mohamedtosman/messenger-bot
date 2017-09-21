@@ -76,7 +76,7 @@ def send_weather():
     r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=Ottawa,Canada&APPID=facf3a7876343295f70bb6b943e3452c')
     json_obj = r.json()
     temp_k = float(json_obj['main']['temp'])
-    temp_c = float("{0:.2f}".format(temp_k - 273.15))
+    temp_c = str(round((temp_k - 273.15), 2)
 
     return temp_c
 
