@@ -50,8 +50,8 @@ quick_replies_list = [{
 },
 {
     "content_type":"text",
-    "title":"World News",
-    "payload":"worldnews",
+    "title":"News",
+    "payload":"news",
 },
 {
     "content_type":"text",
@@ -177,8 +177,8 @@ def send_message(token, recipient, text):
         subreddit_name = "all"
     elif "memes" in text.lower():
         subreddit_name = "memes"
-    elif "worldnews" in text.lower():
-        subreddit_name = "worldnews"
+    elif "news" in text.lower():
+        subreddit_name = "news"
     elif "soccer" in text.lower():
         subreddit_name = "soccer"
     elif "weather" in text.lower():
@@ -189,7 +189,7 @@ def send_message(token, recipient, text):
 
     myUser = get_or_create(db.session, Users, name=recipient)
 
-    if subreddit_name == "worldnews":
+    if subreddit_name == "news":
         for submission in reddit.subreddit(subreddit_name).hot(limit=None):
             if (submission.is_self == True):
                 query_result = Posts.query.filter(Posts.name == submission.id).first()
