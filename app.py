@@ -92,6 +92,8 @@ def send_message(token, recipient, text):
         subreddit_name = "Jokes"
     elif "motivation".encode() in text.lower():
         subreddit_name = "GetMotivated"
+    else:
+        subreddit_name = ""
 
     myUser = get_or_create(db.session, Users, name=recipient)
 
