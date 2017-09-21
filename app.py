@@ -49,15 +49,15 @@ def handle_verification():
 
     return "Hello world", 200
 
-@app.route('/', methods=['POST'])
-def handle_messages():
-    print("Handling Messages")
-    payload = request.get_data()
-    print(payload)
-    for sender, message in messaging_events(payload):
-        print("Incoming from %s: %s" % (sender, message))
-        send_message(PAT, sender, message)
-    return "ok"
+# @app.route('/', methods=['POST'])
+# def handle_messages():
+#     print("Handling Messages")
+#     payload = request.get_data()
+#     print(payload)
+#     for sender, message in messaging_events(payload):
+#         print("Incoming from %s: %s" % (sender, message))
+#         send_message(PAT, sender, message)
+#     return "ok"
 
 # def messaging_events(payload):
 #     """Generate tuples of (sender_id, message_text) from the
@@ -71,6 +71,17 @@ def handle_messages():
 #         else:
 #             yield event["sender"]["id"], "I can't echo this"
 
+@app.route('/', methods=['POST'])
+def handle_messages():
+    print("Handling Messages")
+    payload = request.get_data()
+    print(payload)
+    # for sender, message in messaging_events(payload):
+    #     print("Incoming from %s: %s" % (sender, message))
+    #     send_message(PAT, sender, message)
+    return "ok"
+
+
 def messaging_events(payload):
     """Generate tuples of (sender_id, message_text) from the
     provided payload.
@@ -79,9 +90,29 @@ def messaging_events(payload):
     messaging_events = data["entry"][0]["messaging"]
     for event in messaging_events:
         if "message" in event and "text" in event["message"]:
-            yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
+            sender = event["sender"]["id"]
+            message = event["message"]["text"].encode('unicode_escape')
+            send_message(PAT, sender, message)
         else:
-            print("TESTTTT " + event["message"]["attachments"][0]["payload"]["coordinates"]["lat"])
+            sender = event["sender"]["id"]
+            lat = event["message"]["attachments"][0]["payload"]["coordinates"]["lat"]
+            longit = event["message"]["attachments"][0]["payload"]["coordinates"]["long"]
+            send_message_location(PAT, sender, lat, longit)
+
+def send_message_location(token, recipient, lat, longit):
+    r = requests.get('http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + longit + '&APPID=facf3a7876343295f70bb6b943e3452c')
+    json_obj = r.json()
+    temp_k = float(json_obj['main']['temp'])
+    temp_c = temp_k - 273.15
+
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": str(temp_c) + " °C",
+                            "quick_replies":quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
 
 @app.route('/', methods=['GET'])
 def send_weather():
@@ -237,7 +268,6 @@ def send_message(token, recipient, text):
                             ]}
             }),
             headers={'Content-type': 'application/json'})
-        print("LOCATION RESPONSE ISSSSSS: ")
 
         # temp = send_weather()
 
