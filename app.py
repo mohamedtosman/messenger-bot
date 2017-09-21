@@ -111,15 +111,15 @@ def send_message(token, recipient, text):
 
     """Send the message text to recipient with id recipient.
     """
-    if "meme".encode() in text.lower():
+    if "meme" in text.lower():
         subreddit_name = "memes"
-    elif "shower".encode() in text.lower():
+    elif "shower" in text.lower():
         subreddit_name = "Showerthoughts"
-    elif "joke".encode() in text.lower():
+    elif "joke" in text.lower():
         subreddit_name = "Jokes"
-    elif "motivation".encode() in text.lower():
+    elif "motivation" in text.lower():
         subreddit_name = "GetMotivated"
-    elif "weather".encode() in text.lower():
+    elif "weather" in text.lower():
         temp = send_weather()
         subreddit_name = "weather"
     else:
