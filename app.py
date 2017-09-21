@@ -78,7 +78,7 @@ def send_weather():
     temp_k = float(json_obj['main']['temp'])
     temp_c = temp_k - 273.15
 
-    return temp_c
+    return str(temp_c)
 
 def send_message(token, recipient, text):
 
