@@ -80,6 +80,14 @@ def webhook():
     if data["object"] == "page":
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
+                if messaging_event["message"]["attachments"]:
+                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
+                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+                    lat = messaging_event["message"]["attachments"][0]["payload"]["coordinates"]["lat"]
+                    longi = messaging_event["message"]["attachments"][0]["payload"]["coordinates"]["long"]
+
+                    send_location(PAT, sender_id, lat, longi)
+
                 if messaging_event.get("message"):  # someone sent us a message
 
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
@@ -90,6 +98,22 @@ def webhook():
 
     return "ok", 200
 
+
+def send_location(token, recipient, lat, longi):
+    r = requests.get('http://api.openweathermap.org/data/2.5/weather?' + "lat=" + lat + "&lon=" + longi + '&APPID=facf3a7876343295f70bb6b943e3452c')
+    json_obj = r.json()
+    temp_k = float(json_obj['main']['temp'])
+    temp_c = str(round((temp_k - 273.15), 2))
+
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": temp_c + " °C",
+                            "quick_replies":quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
+
 @app.route('/', methods=['GET'])
 def send_weather():
     r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=Ottawa,Canada&APPID=facf3a7876343295f70bb6b943e3452c')
@@ -98,6 +122,7 @@ def send_weather():
     temp_c = str(round((temp_k - 273.15), 2))
 
     return temp_c
+
 
 def send_message(token, recipient, text):
 
@@ -120,7 +145,7 @@ def send_message(token, recipient, text):
     elif "motivation" in text.lower():
         subreddit_name = "GetMotivated"
     elif "weather" in text.lower():
-        temp = send_weather()
+        # temp = send_weather()
         subreddit_name = "weather"
     else:
         subreddit_name = ""
@@ -224,12 +249,22 @@ def send_message(token, recipient, text):
             headers={'Content-type': 'application/json'})
 
     elif subreddit_name == "weather":
+        # r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        #     params={"access_token": token},
+        #     data=json.dumps({
+        #         "recipient": {"id": recipient},
+        #         "message": {"text": temp + " °C",
+        #                     "quick_replies":quick_replies_list}
+        #     }),
+        #     headers={'Content-type': 'application/json'})
+
+
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
             data=json.dumps({
                 "recipient": {"id": recipient},
-                "message": {"text": temp + " °C",
-                            "quick_replies":quick_replies_list}
+                "message": {"text": "Please share your location:",
+                            "quick_replies":[{"content_type":"location"}]}
             }),
             headers={'Content-type': 'application/json'})
     
