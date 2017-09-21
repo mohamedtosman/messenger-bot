@@ -39,9 +39,14 @@ quick_replies_list = [{
 ]
 @app.route('/', methods=['GET'])
 def handle_verification():
+    print("TESTING VERIFICATION HERE")
+    messenger = Messenger(os.environ.get('my_voice_is_my_password_verify_me'), os.environ.get('EAACAGvJVipcBAFvsThqtUTZBoKtl0tAKUgiopMern9Wudajq7NZATBoCiOUSucQHPZAjrXFpbMRZBZAsyU4XQLlrHGLH33jd3HCKX6JY295PQEdJuf8XIktQ3fZC11ZBFDrhgremG8uzHgXn1udArzHFBj46vlNHXj7VgZChrc0fuwZDZD'))
+    print(messenger.verify(request.args.get('hub.verify_token'))
+    print(request.args.get('hub.challenge'))
+    print("BEFORE ACTUAL VERIFICATION")
+
+
     print("Handling Verification.")
-    print("VERIFICATIONNNNNNN")
-    print(request.args)
     if request.args.get('hub.verify_token') == 'my_voice_is_my_password_verify_me':
         print("Verification successful!")
         return request.args.get('hub.challenge')
