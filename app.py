@@ -197,12 +197,14 @@ def send_message(token, recipient, text):
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
             data=json.dumps({
-                "recipient": {"id": recipient}
+                "recipient": {"id": recipient},
+                "message": {"quick_replies":quick_replies_list}
             }),
             headers={'Content-type': 'application/json'})
+    
 
-    # if r.status_code != requests.codes.ok:
-    #     print(r.text)
+    if r.status_code != requests.codes.ok:
+        print(r.text)
 
 def get_or_create(session, model, **kwargs):
     instance = session.query(model).filter_by(**kwargs).first()
