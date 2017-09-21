@@ -41,7 +41,7 @@ quick_replies_list = [{
 def handle_verification():
     print("Handling Verification.")
     print("VERIFICATIONNNNNNN")
-    print(request.args.get('hub.verify_token'))
+    print(request.args)
     if request.args.get('hub.verify_token') == 'my_voice_is_my_password_verify_me':
         print("Verification successful!")
         return request.args.get('hub.challenge')
@@ -193,8 +193,8 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
 
-    if r.status_code != requests.codes.ok:
-        print(r.text)
+    # if r.status_code != requests.codes.ok:
+    #     print(r.text)
 
 def get_or_create(session, model, **kwargs):
     instance = session.query(model).filter_by(**kwargs).first()
