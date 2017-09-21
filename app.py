@@ -72,7 +72,7 @@ def messaging_events(payload):
 
 def send_message(token, recipient, text):
     for u in db.session.query(Users).all():
-        print("HEREEEEEEE " + u.__dict__)
+        print(u.__dict__)
     """Send the message text to recipient with id recipient.
     """
     if "meme".encode() in text.lower():
