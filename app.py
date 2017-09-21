@@ -89,7 +89,7 @@ def send_message(token, recipient, text):
         subreddit_name = "Showerthoughts"
     elif "joke".encode() in text.lower():
         subreddit_name = "Jokes"
-    else:
+    elif "motivated".encode() in text.lower():
         subreddit_name = "GetMotivated"
 
     myUser = get_or_create(db.session, Users, name=recipient)
