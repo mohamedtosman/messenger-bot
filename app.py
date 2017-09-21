@@ -81,7 +81,7 @@ def messaging_events(payload):
         if "message" in event and "text" in event["message"]:
             yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
         else:
-            print("TESTTTT " + event["message"]["attachments"]["payload"]["coordinates"]["lat"].encode('unicode_escape'))
+            print("TESTTTT " + event["message"]["attachments"][0]["payload"]["coordinates"]["lat"].encode('unicode_escape'))
 
 @app.route('/', methods=['GET'])
 def send_weather():
