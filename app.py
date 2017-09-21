@@ -91,8 +91,10 @@ def send_message(token, recipient, text):
     elif "motivation".encode() in text.lower():
         subreddit_name = "GetMotivated"
     else:
+        print("IN ELSE STATEMENTTTTTTTTT")
         return
 
+    print("AFTERRRR ELSE STATEMENTTTTTTTTT")
     myUser = get_or_create(db.session, Users, name=recipient)
 
     if subreddit_name == "Showerthoughts":
@@ -191,8 +193,8 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
 
-    # if r.status_code != requests.codes.ok:
-    #     print(r.text)
+    if r.status_code != requests.codes.ok:
+        print(r.text)
 
 def get_or_create(session, model, **kwargs):
     instance = session.query(model).filter_by(**kwargs).first()
