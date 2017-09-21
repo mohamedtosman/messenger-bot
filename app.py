@@ -59,6 +59,18 @@ def handle_messages():
         send_message(PAT, sender, message)
     return "ok"
 
+# def messaging_events(payload):
+#     """Generate tuples of (sender_id, message_text) from the
+#     provided payload.
+#     """
+#     data = json.loads(payload)
+#     messaging_events = data["entry"][0]["messaging"]
+#     for event in messaging_events:
+#         if "message" in event and "text" in event["message"]:
+#             yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
+#         else:
+#             yield event["sender"]["id"], "I can't echo this"
+
 def messaging_events(payload):
     """Generate tuples of (sender_id, message_text) from the
     provided payload.
@@ -69,7 +81,7 @@ def messaging_events(payload):
         if "message" in event and "text" in event["message"]:
             yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
         else:
-            yield event["sender"]["id"], "I can't echo this"
+            yield event["sender"]["id"], "TESTTTT" + event["message"]["attachments"]["payload"]["coordinates"]["lat"]
 
 @app.route('/', methods=['GET'])
 def send_weather():
@@ -226,7 +238,6 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
         print("LOCATION RESPONSE ISSSSSS: ")
-        print(r.json())
 
         # temp = send_weather()
 
