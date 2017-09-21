@@ -71,6 +71,7 @@ def handle_verification():
 #         else:
 #             yield event["sender"]["id"], "I can't echo this"
 
+@app.route('/', methods=['POST'])
 def webhook():
     # endpoint for processing incoming messaging events
     data = request.get_json()
