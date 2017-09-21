@@ -80,8 +80,6 @@ def send_message(token, recipient, text):
     # for u in db.session.query(Posts).all():
     #     print(u.__dict__)
 
-    print("HEREEEEEEE")
-    print(text.lower().decode("utf-8"))
     """Send the message text to recipient with id recipient.
     """
     if "meme".encode() in text.lower():
@@ -90,8 +88,10 @@ def send_message(token, recipient, text):
         subreddit_name = "Showerthoughts"
     elif "joke".encode() in text.lower():
         subreddit_name = "Jokes"
-    else:
+    elif "motivation".encode() in text.lower():
         subreddit_name = "GetMotivated"
+    else:
+        return
 
     myUser = get_or_create(db.session, Users, name=recipient)
 
