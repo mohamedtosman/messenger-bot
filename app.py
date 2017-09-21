@@ -72,6 +72,14 @@ def messaging_events(payload):
             yield event["sender"]["id"], "I can't echo this"
 
 @app.route('/', methods=['GET'])
+def send_weather():
+    r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=Ottawa,Canada&APPID=facf3a7876343295f70bb6b943e3452c')
+    json_obj = r.json()
+    temp_k = float(json_obj['main']['temp'])
+    temp_c = temp_k - 273.15
+
+    return temp_c
+
 def send_message(token, recipient, text):
 
     """Printing values of tables for testing"""
@@ -93,22 +101,8 @@ def send_message(token, recipient, text):
     elif "motivation".encode() in text.lower():
         subreddit_name = "GetMotivated"
     elif "weather".encode() in text.lower():
-        r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=Ottawa,Canada&APPID=facf3a7876343295f70bb6b943e3452c')
-        json_obj = r.json()
-        temp_k = float(json_obj['main']['temp'])
-        temp_c = temp_k - 273.15
-
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-            params={"access_token": token},
-            data=json.dumps({
-                "recipient": {"id": recipient},
-                "message": {"text": temp_c,
-                            "quick_replies":quick_replies_list}
-            }),
-            headers={'Content-type': 'application/json'})
-
-
-        subreddit_name = ""
+        temp = send_weather()
+        subreddit_name = "weather"
     else:
         subreddit_name = ""
 
@@ -210,6 +204,16 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
 
+    elif subreddit_name == "weather":
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": temp,
+                            "quick_replies":quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
+    
     else:
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
