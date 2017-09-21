@@ -16,25 +16,47 @@ reddit = praw.Reddit(client_id='oSX_k9ERfsDcjA',
 # by the Facebook App that will be created.
 PAT = 'EAACAGvJVipcBAFvsThqtUTZBoKtl0tAKUgiopMern9Wudajq7NZATBoCiOUSucQHPZAjrXFpbMRZBZAsyU4XQLlrHGLH33jd3HCKX6JY295PQEdJuf8XIktQ3fZC11ZBFDrhgremG8uzHgXn1udArzHFBj46vlNHXj7VgZChrc0fuwZDZD'
 
+# quick_replies_list = [{
+#     "content_type":"text",
+#     "title":"Meme",
+#     "payload":"meme",
+# },
+# {
+#     "content_type":"text",
+#     "title":"Motivation",
+#     "payload":"motivation",
+# },
+# {
+#     "content_type":"text",
+#     "title":"Shower Thought",
+#     "payload":"Shower_Thought",
+# },
+# {
+#     "content_type":"text",
+#     "title":"Jokes",
+#     "payload":"Jokes",
+# }
+# ]
+
 quick_replies_list = [{
+    "content_type":"text",
+    "title":"All",
+    "payload":"all",
+},
+{
     "content_type":"text",
     "title":"Meme",
     "payload":"meme",
 },
 {
     "content_type":"text",
-    "title":"Motivation",
-    "payload":"motivation",
+    "title":"World News",
+    "payload":"worldnews",
 },
 {
     "content_type":"text",
-    "title":"Shower Thought",
-    "payload":"Shower_Thought",
-},
-{
-    "content_type":"text",
-    "title":"Jokes",
-    "payload":"Jokes",
+    "title":"Soccer",
+    "payload":"soccer",
 }
 ]
 
@@ -136,14 +158,29 @@ def send_message(token, recipient, text):
 
     """Send the message text to recipient with id recipient.
     """
-    if "meme" in text.lower():
+    # if "meme" in text.lower():
+    #     subreddit_name = "memes"
+    # elif "shower" in text.lower():
+    #     subreddit_name = "Showerthoughts"
+    # elif "joke" in text.lower():
+    #     subreddit_name = "Jokes"
+    # elif "motivation" in text.lower():
+    #     subreddit_name = "GetMotivated"
+    # elif "weather" in text.lower():
+    #     # temp = send_weather()
+    #     subreddit_name = "weather"
+    # else:
+    #     subreddit_name = ""
+
+
+    if "all" in text.lower():
+        subreddit_name = "all"
+    elif "memes" in text.lower():
         subreddit_name = "memes"
-    elif "shower" in text.lower():
-        subreddit_name = "Showerthoughts"
-    elif "joke" in text.lower():
-        subreddit_name = "Jokes"
-    elif "motivation" in text.lower():
-        subreddit_name = "GetMotivated"
+    elif "worldnews" in text.lower():
+        subreddit_name = "worldnews"
+    elif "soccer" in text.lower():
+        subreddit_name = "soccer"
     elif "weather" in text.lower():
         # temp = send_weather()
         subreddit_name = "weather"
@@ -152,7 +189,7 @@ def send_message(token, recipient, text):
 
     myUser = get_or_create(db.session, Users, name=recipient)
 
-    if subreddit_name == "Showerthoughts":
+    if subreddit_name == "worldnews":
         for submission in reddit.subreddit(subreddit_name).hot(limit=None):
             if (submission.is_self == True):
                 query_result = Posts.query.filter(Posts.name == submission.id).first()
@@ -179,7 +216,7 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
     
-    elif subreddit_name == "Jokes":
+    elif subreddit_name == "soccer":
         for submission in reddit.subreddit(subreddit_name).hot(limit=None):
             if ((submission.is_self == True) and ( submission.link_flair_text is None)):
                 query_result = Posts.query.filter(Posts.name == submission.id).first()
@@ -216,7 +253,7 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
         
-    elif subreddit_name == "GetMotivated" or subreddit_name == "memes":
+    elif subreddit_name == "all" or subreddit_name == "memes":
         payload = "http://imgur.com/WeyNGtQ.jpg"
         for submission in reddit.subreddit(subreddit_name).hot(limit=None):
             if (submission.link_flair_css_class == 'image') or ((submission.is_self != True) and ((".jpg" in submission.url) or (".png" in submission.url))):
