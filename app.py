@@ -101,7 +101,6 @@ def send_message(token, recipient, text):
     elif "motivation".encode() in text.lower():
         subreddit_name = "GetMotivated"
     elif "weather".encode() in text.lower():
-        temp = send_weather()
         subreddit_name = "weather"
     else:
         subreddit_name = ""
@@ -205,14 +204,33 @@ def send_message(token, recipient, text):
             headers={'Content-type': 'application/json'})
 
     elif subreddit_name == "weather":
+        # r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+        #     params={"access_token": token},
+        #     data=json.dumps({
+        #         "recipient": {"id": recipient},
+        #         "message": {"text": temp + " °C",
+        #                     "quick_replies":quick_replies_list}
+        #     }),
+        #     headers={'Content-type': 'application/json'})
+        
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
             data=json.dumps({
                 "recipient": {"id": recipient},
-                "message": {"text": temp + " °C",
-                            "quick_replies":quick_replies_list}
+                "message": {"text": "Please share your location:",
+                            "quick_replies":[
+                            {
+                                "content_type": "location"
+                            }
+                            ]}
             }),
             headers={'Content-type': 'application/json'})
+        print("LOCATION RESPONSE ISSSSSS: ")
+        print(r.json())
+
+        # temp = send_weather()
+
+
     
     else:
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
