@@ -40,22 +40,22 @@ PAT = 'EAACAGvJVipcBAFvsThqtUTZBoKtl0tAKUgiopMern9Wudajq7NZATBoCiOUSucQHPZAjrXFp
 
 quick_replies_list = [{
     "content_type":"text",
-    "title":"All",
+    "title":"all",
     "payload":"all",
 },
 {
     "content_type":"text",
-    "title":"Meme",
-    "payload":"meme",
+    "title":"memes",
+    "payload":"memes",
 },
 {
     "content_type":"text",
-    "title":"World News",
+    "title":"worldnews",
     "payload":"worldnews",
 },
 {
     "content_type":"text",
-    "title":"Soccer",
+    "title":"soccer",
     "payload":"soccer",
 }
 ]
