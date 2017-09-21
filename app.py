@@ -40,6 +40,8 @@ quick_replies_list = [{
 @app.route('/', methods=['GET'])
 def handle_verification():
     print("Handling Verification.")
+    print("VERIFICATIONNNNNNN")
+    print(request.args.get('hub.verify_token'))
     if request.args.get('hub.verify_token') == 'my_voice_is_my_password_verify_me':
         print("Verification successful!")
         return request.args.get('hub.challenge')
@@ -90,11 +92,7 @@ def send_message(token, recipient, text):
         subreddit_name = "Jokes"
     elif "motivation".encode() in text.lower():
         subreddit_name = "GetMotivated"
-    else:
-        print("IN ELSE STATEMENTTTTTTTTT")
-        return
 
-    print("AFTERRRR ELSE STATEMENTTTTTTTTT")
     myUser = get_or_create(db.session, Users, name=recipient)
 
     if subreddit_name == "Showerthoughts":
@@ -161,7 +159,7 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
         
-    else:
+    elif subreddit_name == "GetMotivated" or subreddit_name == "memes":
         payload = "http://imgur.com/WeyNGtQ.jpg"
         for submission in reddit.subreddit(subreddit_name).hot(limit=None):
             if (submission.link_flair_css_class == 'image') or ((submission.is_self != True) and ((".jpg" in submission.url) or (".png" in submission.url))):
