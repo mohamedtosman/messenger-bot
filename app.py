@@ -49,27 +49,45 @@ def handle_verification():
 
     return "Hello world", 200
 
-@app.route('/', methods=['POST'])
-def handle_messages():
-    print("Handling Messages")
-    payload = request.get_data()
-    print(payload)
-    for sender, message in messaging_events(payload):
-        print("Incoming from %s: %s" % (sender, message))
-        send_message(PAT, sender, message)
-    return "ok"
+# @app.route('/', methods=['POST'])
+# def handle_messages():
+#     print("Handling Messages")
+#     payload = request.get_data()
+#     print(payload)
+#     for sender, message in messaging_events(payload):
+#         print("Incoming from %s: %s" % (sender, message))
+#         send_message(PAT, sender, message)
+#     return "ok"
 
-def messaging_events(payload):
-    """Generate tuples of (sender_id, message_text) from the
-    provided payload.
-    """
-    data = json.loads(payload)
-    messaging_events = data["entry"][0]["messaging"]
-    for event in messaging_events:
-        if "message" in event and "text" in event["message"]:
-            yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
-        else:
-            yield event["sender"]["id"], "I can't echo this"
+# def messaging_events(payload):
+#     """Generate tuples of (sender_id, message_text) from the
+#     provided payload.
+#     """
+#     data = json.loads(payload)
+#     messaging_events = data["entry"][0]["messaging"]
+#     for event in messaging_events:
+#         if "message" in event and "text" in event["message"]:
+#             yield event["sender"]["id"], event["message"]["text"].encode('unicode_escape')
+#         else:
+#             yield event["sender"]["id"], "I can't echo this"
+
+def webhook():
+    # endpoint for processing incoming messaging events
+    data = request.get_json()
+    print(data)
+
+    if data["object"] == "page":
+        for entry in data["entry"]:
+            for messaging_event in entry["messaging"]:
+                if messaging_event.get("message"):  # someone sent us a message
+
+                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
+                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+                    message_text = messaging_event["message"]["text"]  # the message's text
+
+                    send_message(PAT, sender_id, message_text)
+
+    return "ok", 200
 
 @app.route('/', methods=['GET'])
 def send_weather():
