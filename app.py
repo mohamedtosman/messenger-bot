@@ -171,7 +171,7 @@ def send_message(token, recipient, text):
     # print("POSTS:")
     # for u in db.session.query(Posts).all():
     #     print(u.__dict__)
-    print("USER INPUT ISSSSS: " + user_input)
+    print("USER INPUT ISSSSS: " + text.lower())
     """Send the message text to recipient with id recipient.
     """
     if "meme" in text.lower():
