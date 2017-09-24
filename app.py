@@ -187,7 +187,7 @@ def send_message(token, recipient, text):
         user_input = "weather"
     elif "standings" in text.lower():
         user_input = "standings"
-    elif "english" in text.lower():
+    elif "premier" in text.lower():
         user_input = "445"
     else:
         user_input = ""
