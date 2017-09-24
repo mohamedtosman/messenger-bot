@@ -38,6 +38,28 @@ quick_replies_list = [{
 }
 ]
 
+leagues_quick_replies_list = [{
+    "content_type":"text",
+    "title":"Premier League",
+    "payload":"english",
+},
+{
+    "content_type":"text",
+    "title":"League 1",
+    "payload":"french",
+},
+{
+    "content_type":"text",
+    "title":"Bundesliga",
+    "payload":"german",
+},
+{
+    "content_type":"text",
+    "title":"Seria A",
+    "payload":"italian",
+}
+]
+
 @app.route('/', methods=['GET'])
 def handle_verification():
 # when the endpoint is registered as a webhook, it must echo back
@@ -114,14 +136,30 @@ def send_location(token, recipient, lat, longi):
             }),
             headers={'Content-type': 'application/json'})
 
-@app.route('/', methods=['GET'])
-def send_weather():
-    r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=Ottawa,Canada&APPID=facf3a7876343295f70bb6b943e3452c')
-    json_obj = r.json()
-    temp_k = float(json_obj['main']['temp'])
-    temp_c = str(round((temp_k - 273.15), 2))
 
-    return temp_c
+@app.route('/', methods=['GET'])
+def getLeagueTable(leagueId):
+    connection = http.client.HTTPConnection('api.football-data.org')
+    headers = { 'X-Auth-Token': 'e6bbc2613aca45cba78976ceb341858d', 'X-Response-Control': 'minified' }
+    connection.request('GET', '/v1/competitions/' + str(leagueId) + '/leagueTable', None, headers )
+    response = json.loads(connection.getresponse().read().decode())
+
+    #Prints league table
+    s = ""
+    for team in response['standing']:
+        s+=str(team['rank']) + ". " + str(team['team']) + "\n"
+
+    return s
+
+
+# @app.route('/', methods=['GET'])
+# def send_weather():
+#     r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=Ottawa,Canada&APPID=facf3a7876343295f70bb6b943e3452c')
+#     json_obj = r.json()
+#     temp_k = float(json_obj['main']['temp'])
+#     temp_c = str(round((temp_k - 273.15), 2))
+
+#     return temp_c
 
 
 def send_message(token, recipient, text):
@@ -137,24 +175,28 @@ def send_message(token, recipient, text):
     """Send the message text to recipient with id recipient.
     """
     if "meme" in text.lower():
-        subreddit_name = "memes"
+        user_input = "memes"
     elif "shower" in text.lower():
-        subreddit_name = "Showerthoughts"
+        user_input = "Showerthoughts"
     elif "joke" in text.lower():
-        subreddit_name = "Jokes"
+        user_input = "Jokes"
     elif "motivation" in text.lower():
-        subreddit_name = "GetMotivated"
+        user_input = "GetMotivated"
     elif "weather" in text.lower():
         # temp = send_weather()
-        subreddit_name = "weather"
+        user_input = "weather"
+    elif "standings" in text.lower():
+        user_input = "standings"
+    elif "english" in text.lower():
+        user_input = "445"
     else:
-        subreddit_name = ""
+        user_input = ""
 
 
     myUser = get_or_create(db.session, Users, name=recipient)
 
-    if subreddit_name == "Showerthoughts":
-        for submission in reddit.subreddit(subreddit_name).hot(limit=None):
+    if user_input == "Showerthoughts":
+        for submission in reddit.subreddit(user_input).hot(limit=None):
             if (submission.is_self == True):
                 query_result = Posts.query.filter(Posts.name == submission.id).first()
                 if query_result is None:
@@ -180,8 +222,8 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
     
-    elif subreddit_name == "Jokes":
-        for submission in reddit.subreddit(subreddit_name).hot(limit=None):
+    elif user_input == "Jokes":
+        for submission in reddit.subreddit(user_input).hot(limit=None):
             if ((submission.is_self == True) and ( submission.link_flair_text is None)):
                 query_result = Posts.query.filter(Posts.name == submission.id).first()
                 if query_result is None:
@@ -217,9 +259,9 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
         
-    elif subreddit_name == "GetMotivated" or subreddit_name == "memes":
+    elif user_input == "GetMotivated" or user_input == "memes":
         payload = "http://imgur.com/WeyNGtQ.jpg"
-        for submission in reddit.subreddit(subreddit_name).hot(limit=None):
+        for submission in reddit.subreddit(user_input).hot(limit=None):
             if (submission.link_flair_css_class == 'image') or ((submission.is_self != True) and ((".jpg" in submission.url) or (".png" in submission.url))):
                 query_result = Posts.query.filter(Posts.name == submission.id).first()
                 if query_result is None:
@@ -249,7 +291,7 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
 
-    elif subreddit_name == "weather":
+    elif user_input == "weather":
         # r = requests.post("https://graph.facebook.com/v2.6/me/messages",
         #     params={"access_token": token},
         #     data=json.dumps({
@@ -268,6 +310,30 @@ def send_message(token, recipient, text):
                             "quick_replies":[{"content_type":"location"}]}
             }),
             headers={'Content-type': 'application/json'})
+
+    elif user_input == "standings":
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": "Please pick a league:",
+                            "quick_replies":leagues_quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
+
+    #english league
+    elif user_input == "445":
+        standings = getLeagueTable(user_input)
+
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": standings,
+                            "quick_replies":quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
+
     
     else:
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
