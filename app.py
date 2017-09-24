@@ -48,7 +48,7 @@ leagues_quick_replies_list = [{
 },
 {
     "content_type":"text",
-    "title":"League 1",
+    "title":"Ligue 1",
     "payload":"french",
 },
 {
@@ -155,14 +155,24 @@ def getLeagueTable(leagueId):
     return s
 
 
-# @app.route('/', methods=['GET'])
-# def send_weather():
-#     r = requests.get('http://api.openweathermap.org/data/2.5/weather?q=Ottawa,Canada&APPID=facf3a7876343295f70bb6b943e3452c')
-#     json_obj = r.json()
-#     temp_k = float(json_obj['main']['temp'])
-#     temp_c = str(round((temp_k - 273.15), 2))
+@app.route('/', methods=['GET'])
+def getDailyFixtures(leagueId):
+    connection = http.client.HTTPConnection('api.football-data.org')
+    headers = { 'X-Auth-Token': 'e6bbc2613aca45cba78976ceb341858d', 'X-Response-Control': 'minified' }
+    connection.request('GET', '/v1/competitions/' + str(leagueId) + '/fixtures', None, headers )
+    response = json.loads(connection.getresponse().read().decode())
 
-#     return temp_c
+    today = datetime.date.today()
+    s = ""
+    for i in response['fixtures']:
+        m = re.search(r'(\d+-\d+-\d+)', i['date'])
+        if str(today) == str(m.group(1)):
+            if i['status'] == "FINISHED":
+                s+=str(i['homeTeamName']) + ' ' + str(i['result']['goalsHomeTeam']) + ' - ' + str(i['result']['goalsAwayTeam']) + ' ' + str(i['awayTeamName']) + "\n"
+            else:
+                s+=str(i['homeTeamName']) + ' ' + str(i['awayTeamName']) + "\n"
+
+    return s
 
 
 def send_message(token, recipient, text):
@@ -192,6 +202,12 @@ def send_message(token, recipient, text):
         user_input = "standings"
     elif "premier" in text.lower():
         user_input = "445"
+    elif "serie" in text.lower():
+        user_input = "456"
+    elif "bundesliga" in text.lower():
+        user_input = "452"
+    elif "ligue" in text.lower():
+        user_input = "450"
     else:
         user_input = ""
 
@@ -326,6 +342,45 @@ def send_message(token, recipient, text):
 
     #english league
     elif user_input == "445":
+        standings = getLeagueTable(user_input)
+
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": standings,
+                            "quick_replies":quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
+
+    #Italian league
+    elif user_input == "456":
+        standings = getLeagueTable(user_input)
+
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": standings,
+                            "quick_replies":quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
+
+    #German league
+    elif user_input == "452":
+        standings = getLeagueTable(user_input)
+
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": standings,
+                            "quick_replies":quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
+
+    #French league
+    elif user_input == "450":
         standings = getLeagueTable(user_input)
 
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
