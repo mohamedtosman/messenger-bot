@@ -321,7 +321,7 @@ def send_message(token, recipient, text):
 
     elif "standings" in user_input:
         #english league
-        elif "445" in user_input:
+        if "445" in user_input:
             standings = getLeagueTable(user_input)
 
             r = requests.post("https://graph.facebook.com/v2.6/me/messages",
