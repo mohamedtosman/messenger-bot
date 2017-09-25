@@ -148,7 +148,7 @@ def getDailyFixtures(leagueId):
             if i['status'] == "FINISHED":
                 s+=str(i['homeTeamName']) + ' ' + str(i['result']['goalsHomeTeam']) + ' - ' + str(i['result']['goalsAwayTeam']) + ' ' + str(i['awayTeamName']) + "\n"
             else:
-                s+=str(i['homeTeamName']) + ' ' + str(i['awayTeamName']) + "\n"
+                s+=str(i['homeTeamName']) + ' - ' + str(i['awayTeamName']) + "\n"
 
     return s
 
