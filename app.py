@@ -323,6 +323,33 @@ def send_message(token, recipient, text):
                             "quick_replies":quick_replies_list}
             }),
             headers={'Content-type': 'application/json'})
+
+    elif "fixtures" in user_input:
+        #english league
+        if "445" in user_input:
+            leagueId = "445"
+
+        #Italian league
+        elif "456" in user_input:
+            leagueId = "456"
+        #German league
+        elif "452" in user_input:
+            leagueId = "452"
+
+        #French league
+        elif "450" in user_input:
+            leagueId = "450"
+
+        standings = getDailyFixtures(leagueId)
+
+        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+            params={"access_token": token},
+            data=json.dumps({
+                "recipient": {"id": recipient},
+                "message": {"text": standings,
+                            "quick_replies":quick_replies_list}
+            }),
+            headers={'Content-type': 'application/json'})
     
     else:
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
