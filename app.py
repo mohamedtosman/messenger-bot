@@ -349,7 +349,7 @@ def send_message(token, recipient, text):
         elif "450" in user_input:
             leagueId = "450"
 
-        standings = getDailyFixtures(leagueId)
+        fixtures = getDailyFixtures(leagueId)
 
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
