@@ -185,6 +185,15 @@ def send_message(token, recipient, text):
             user_input = "standings452"
         elif "ligue" in text.lower():
             user_input = "standings450"
+    elif "fixtures" in text.lower():
+        if "premier" in text.lower():
+            user_input = "fixtures445"
+        elif "serie" in text.lower():
+            user_input = "fixtures456"
+        elif "bundesliga" in text.lower():
+            user_input = "fixtures452"
+        elif "ligue" in text.lower():
+            user_input = "fixtures450"
     else:
         user_input = ""
 
