@@ -58,7 +58,7 @@ leagues_quick_replies_list = [{
 },
 {
     "content_type":"text",
-    "title":"Seria A",
+    "title":"Serie A",
     "payload":"italian",
 }
 ]
@@ -199,15 +199,14 @@ def send_message(token, recipient, text):
         # temp = send_weather()
         user_input = "weather"
     elif "standings" in text.lower():
-        user_input = "standings"
-    elif "premier" in text.lower():
-        user_input = "445"
-    elif "serie" in text.lower():
-        user_input = "456"
-    elif "bundesliga" in text.lower():
-        user_input = "452"
-    elif "ligue" in text.lower():
-        user_input = "450"
+        if "premier" in text.lower():
+            user_input = "standings445"
+        elif "serie" in text.lower():
+            user_input = "standings456"
+        elif "bundesliga" in text.lower():
+            user_input = "standings452"
+        elif "ligue" in text.lower():
+            user_input = "standings450"
     else:
         user_input = ""
 
@@ -311,16 +310,6 @@ def send_message(token, recipient, text):
             headers={'Content-type': 'application/json'})
 
     elif user_input == "weather":
-        # r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-        #     params={"access_token": token},
-        #     data=json.dumps({
-        #         "recipient": {"id": recipient},
-        #         "message": {"text": temp + " °C",
-        #                     "quick_replies":quick_replies_list}
-        #     }),
-        #     headers={'Content-type': 'application/json'})
-
-
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
             data=json.dumps({
@@ -330,65 +319,66 @@ def send_message(token, recipient, text):
             }),
             headers={'Content-type': 'application/json'})
 
-    elif user_input == "standings":
+    elif "standings" in user_input:
+        #english league
+        elif "445" in user_input:
+            standings = getLeagueTable(user_input)
+
+            r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+                params={"access_token": token},
+                data=json.dumps({
+                    "recipient": {"id": recipient},
+                    "message": {"text": standings,
+                                "quick_replies":quick_replies_list}
+                }),
+                headers={'Content-type': 'application/json'})
+
+        #Italian league
+        elif "456" in user_input:
+            standings = getLeagueTable(user_input)
+
+            r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+                params={"access_token": token},
+                data=json.dumps({
+                    "recipient": {"id": recipient},
+                    "message": {"text": standings,
+                                "quick_replies":quick_replies_list}
+                }),
+                headers={'Content-type': 'application/json'})
+
+        #German league
+        elif "452" in user_input:
+            standings = getLeagueTable(user_input)
+
+            r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+                params={"access_token": token},
+                data=json.dumps({
+                    "recipient": {"id": recipient},
+                    "message": {"text": standings,
+                                "quick_replies":quick_replies_list}
+                }),
+                headers={'Content-type': 'application/json'})
+
+        #French league
+        elif "450" in user_input:
+            standings = getLeagueTable(user_input)
+
+            r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+                params={"access_token": token},
+                data=json.dumps({
+                    "recipient": {"id": recipient},
+                    "message": {"text": standings,
+                                "quick_replies":quick_replies_list}
+                }),
+                headers={'Content-type': 'application/json'})
+
+    elif user_input == "fixtures":
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
             data=json.dumps({
                 "recipient": {"id": recipient},
                 "message": {"text": "Please pick a league:",
                             "quick_replies":leagues_quick_replies_list}
-            }),
-            headers={'Content-type': 'application/json'})
-
-    #english league
-    elif user_input == "445":
-        standings = getLeagueTable(user_input)
-
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-            params={"access_token": token},
-            data=json.dumps({
-                "recipient": {"id": recipient},
-                "message": {"text": standings,
-                            "quick_replies":quick_replies_list}
-            }),
-            headers={'Content-type': 'application/json'})
-
-    #Italian league
-    elif user_input == "456":
-        standings = getLeagueTable(user_input)
-
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-            params={"access_token": token},
-            data=json.dumps({
-                "recipient": {"id": recipient},
-                "message": {"text": standings,
-                            "quick_replies":quick_replies_list}
-            }),
-            headers={'Content-type': 'application/json'})
-
-    #German league
-    elif user_input == "452":
-        standings = getLeagueTable(user_input)
-
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-            params={"access_token": token},
-            data=json.dumps({
-                "recipient": {"id": recipient},
-                "message": {"text": standings,
-                            "quick_replies":quick_replies_list}
-            }),
-            headers={'Content-type': 'application/json'})
-
-    #French league
-    elif user_input == "450":
-        standings = getLeagueTable(user_input)
-
-        r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-            params={"access_token": token},
-            data=json.dumps({
-                "recipient": {"id": recipient},
-                "message": {"text": standings,
-                            "quick_replies":quick_replies_list}
             }),
             headers={'Content-type': 'application/json'})
 
