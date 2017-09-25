@@ -41,28 +41,6 @@ quick_replies_list = [{
 }
 ]
 
-leagues_quick_replies_list = [{
-    "content_type":"text",
-    "title":"Premier League",
-    "payload":"english",
-},
-{
-    "content_type":"text",
-    "title":"Ligue 1",
-    "payload":"french",
-},
-{
-    "content_type":"text",
-    "title":"Bundesliga",
-    "payload":"german",
-},
-{
-    "content_type":"text",
-    "title":"Serie A",
-    "payload":"italian",
-}
-]
-
 @app.route('/', methods=['GET'])
 def handle_verification():
 # when the endpoint is registered as a webhook, it must echo back
@@ -322,66 +300,29 @@ def send_message(token, recipient, text):
     elif "standings" in user_input:
         #english league
         if "445" in user_input:
-            standings = getLeagueTable(user_input)
-
-            r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-                params={"access_token": token},
-                data=json.dumps({
-                    "recipient": {"id": recipient},
-                    "message": {"text": standings,
-                                "quick_replies":quick_replies_list}
-                }),
-                headers={'Content-type': 'application/json'})
+            leagueId = "445"
 
         #Italian league
         elif "456" in user_input:
-            standings = getLeagueTable(user_input)
-
-            r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-                params={"access_token": token},
-                data=json.dumps({
-                    "recipient": {"id": recipient},
-                    "message": {"text": standings,
-                                "quick_replies":quick_replies_list}
-                }),
-                headers={'Content-type': 'application/json'})
-
+            leagueId = "456"
         #German league
         elif "452" in user_input:
-            standings = getLeagueTable(user_input)
-
-            r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-                params={"access_token": token},
-                data=json.dumps({
-                    "recipient": {"id": recipient},
-                    "message": {"text": standings,
-                                "quick_replies":quick_replies_list}
-                }),
-                headers={'Content-type': 'application/json'})
+            leagueId = "452"
 
         #French league
         elif "450" in user_input:
-            standings = getLeagueTable(user_input)
+            leagueId = "450"
 
-            r = requests.post("https://graph.facebook.com/v2.6/me/messages",
-                params={"access_token": token},
-                data=json.dumps({
-                    "recipient": {"id": recipient},
-                    "message": {"text": standings,
-                                "quick_replies":quick_replies_list}
-                }),
-                headers={'Content-type': 'application/json'})
+        standings = getLeagueTable(leagueId)
 
-    elif user_input == "fixtures":
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
             params={"access_token": token},
             data=json.dumps({
                 "recipient": {"id": recipient},
-                "message": {"text": "Please pick a league:",
-                            "quick_replies":leagues_quick_replies_list}
+                "message": {"text": standings,
+                            "quick_replies":quick_replies_list}
             }),
             headers={'Content-type': 'application/json'})
-
     
     else:
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
